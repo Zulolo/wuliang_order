@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS wuliang_order;
 use wuliang_order;
 
 CREATE TABLE IF NOT EXISTS menu (
-	ProductID INT NOT NULL,
+	ProductID INT NOT NULL AUTO_INCREMENT,
 	CreatePerson VARCHAR(255) NOT NULL,
 	CreateDate DATE NOT NULL,
 	UpdatePerson VARCHAR(255),
