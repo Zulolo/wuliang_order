@@ -1,1 +1,2 @@
-/server/config/config.js
+/server/config/production.json
+/node_modules

@@ -9,6 +9,7 @@
   "author": "zulolo",
   "license": "ISC",
   "dependencies": {
+    "config": "^1.26.2",
     "hapi": "^16.5.2",
     "mysql": "^2.14.1"
   }
