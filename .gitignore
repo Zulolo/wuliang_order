@@ -1,2 +1,2 @@
 /server/config/production.json
-/node_modules
+/node_modules/*
