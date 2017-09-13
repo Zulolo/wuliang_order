@@ -9,8 +9,12 @@
   "author": "zulolo",
   "license": "ISC",
   "dependencies": {
+    "boom": "^5.2.0",
     "config": "^1.26.2",
     "hapi": "^16.5.2",
-    "mysql": "^2.14.1"
+    "joi": "^10.6.0",
+    "mysql": "^2.14.1",
+    "node-uuid": "^1.4.8",
+    "uuid": "^3.1.0"
   }
 }

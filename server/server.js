@@ -5,8 +5,10 @@ var mysql = require('mysql');
 var config = require('config');
 
 var dbConfig = config.get('dbConfig');
-var mysql_conn = mysql.createConnection(dbConfig);
+// var mysql_conn = mysql.createConnection(dbConfig);
 const server = new Hapi.Server();
+
+server.app.db =  mysql.createConnection(dbConfig);
 
 server.route({
     method: 'GET',
