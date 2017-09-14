@@ -1,7 +1,7 @@
 {
   "apps": [{
     "name": "wuliang order",
-    "script": "server.js",
+    "script": "./server/server.js",
     "cwd": "/root/nideshop/",
     "exec_mode": "cluster",
     "instances": 0,

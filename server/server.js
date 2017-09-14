@@ -1,14 +1,20 @@
 'use strict';
 
 const Hapi = require('hapi');
-var mysql = require('mysql');
-var config = require('config');
+// var mysql = require('mysql');
+const mongojs = require('mongojs');
+// var config = require('config');
 
-var dbConfig = config.get('dbConfig');
+// var dbConfig = config.get('dbConfig');
 // var mysql_conn = mysql.createConnection(dbConfig);
 const server = new Hapi.Server();
+server.connection({  
+    host: 'localhost', 
+    port: 3000
+});
 
-server.app.db =  mysql.createConnection(dbConfig);
+// server.app.db =  mysql.createConnection(dbConfig);
+server.app.db = mongojs('hapi-rest-mongo', ['dishes']);
 
 //Load plugins and start server
 server.register([
