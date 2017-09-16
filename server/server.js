@@ -3,9 +3,11 @@
 const Hapi = require('hapi');
 // var mysql = require('mysql');
 const mongojs = require('mongojs');
-// var config = require('config');
+// var config = require('nodejs-config')(
+//    './config'  // an absolute path to your applications `config` directory 
+// );
 
-// var dbConfig = config.get('dbConfig');
+// var dbConfig = config.get('default').dbConfig;
 // var mysql_conn = mysql.createConnection(dbConfig);
 const server = new Hapi.Server();
 server.connection({  

@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "boom": "^5.2.0",
-    "config": "^1.26.2",
+    "config-file": "^0.3.2",
+    "fs": "0.0.1-security",
+    "fs-extra": "^4.0.2",
     "hapi": "^16.5.2",
     "joi": "^10.6.0",
     "mongojs": "^2.4.1",

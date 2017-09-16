@@ -3,6 +3,11 @@
 const Boom = require('boom');
 const uuid = require('uuid');
 const Joi = require('joi');
+const fs = require('fs-extra');
+var config = require('config-file');
+
+var opts = config('/root/wuliang_order/server/config/default.json');
+// var imagePathConfig = config.get('imagePath');
 
 exports.register = function(server, options, next) {
 
@@ -47,8 +52,18 @@ exports.register = function(server, options, next) {
 		path: '/dishes',
 		handler: function(request, reply) {
 			const dish = request.payload;
+
 			//Create an id
 			dish._id = uuid.v1();
+			dish.date = Date.now();
+			if (fs.existsSync(request.payload.ProductImage.path)) {
+				var imageSavePath = opts.imagePath + dish._id + '.jpg';
+				fs.moveSync(request.payload.ProductImage.path, imageSavePath, { overwrite: true });
+				dish.ProductImage = imageSavePath;
+			}
+			// if (dish.ProductImage) {
+			// 	dish.ProductImage.remove();
+			// }
 			db.dishes.save(dish, (err, result) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
@@ -57,11 +72,18 @@ exports.register = function(server, options, next) {
 			});
 		},
 		config: {
+			payload: {
+				output: 'file',
+				maxBytes: 1024 * 1024 * 1,
+				parse: true
+			},
 			validate: {
 				payload: {
-					CreatePerson: Joi.string().min(2).max(100).required(),
+					CreatePerson: Joi.string().min(2).max(50).required(),
 					ProductName: Joi.string().min(2).max(100).required(),
-					ProductPrice: Joi.number().required()
+					ProductSize: Joi.string().min(2).max(50),
+					ProductPrice: Joi.number().required(),
+					ProductImage: Joi.any()
 				}
 			}
 		}
@@ -74,7 +96,8 @@ exports.register = function(server, options, next) {
 			db.dishes.update({
 				_id: request.params.id
 			}, {
-				$set: request.payload
+				$set: request.payload,
+				_date: Date.now()
 			}, function(err, result) {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));

@@ -1,10 +1,11 @@
 {
-  "dbConfig": {
-    "host": 'localhost',
-    "port": '3306',
-    "database": 'menu',
-    "user": 'root',
-    "password": 'Aa1234',
-    "encoding": 'utf8'
-  },
+	"imagePath": "/usr/share/nginx/html/images/",
+	"dbConfig": {
+		"host": "172.17.0.7",
+		"port": "3306",
+		"database": "menu",
+		"user": "root",
+		"password": "dodo@2677024",
+		"encoding": "utf8"
+	}
 }
