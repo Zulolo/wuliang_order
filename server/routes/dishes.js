@@ -7,7 +7,6 @@ const fs = require('fs-extra');
 var config = require('config-file');
 
 var opts = config('/root/wuliang_order/server/config/default.json');
-// var imagePathConfig = config.get('imagePath');
 
 exports.register = function(server, options, next) {
 
@@ -28,6 +27,7 @@ exports.register = function(server, options, next) {
 			});
 		}
 	});
+
 
 	server.route({
 		method: 'GET',
@@ -51,19 +51,25 @@ exports.register = function(server, options, next) {
 		method: 'POST',
 		path: '/dishes',
 		handler: function(request, reply) {
-			const dish = request.payload;
-
+			var dish = request.payload;
 			//Create an id
 			dish._id = uuid.v1();
 			dish.date = Date.now();
-			if (fs.existsSync(request.payload.ProductImage.path)) {
-				var imageSavePath = opts.imagePath + dish._id + '.jpg';
-				fs.moveSync(request.payload.ProductImage.path, imageSavePath, { overwrite: true });
-				dish.ProductImage = imageSavePath;
-			}
-			// if (dish.ProductImage) {
-			// 	dish.ProductImage.remove();
-			// }
+			if (dish.ProductImage) {
+				if (dish.ProductImage.path) {
+					var imageSavePath = opts.imagePath + dish._id + '.jpg';
+					if (fs.existsSync(dish.ProductImage.path)) {
+						fs.moveSync(dish.ProductImage.path, imageSavePath, {
+							overwrite: true
+						});
+						dish.ProductImage = dish._id + '.jpg';
+					} else {
+						delete dish.ProductImage;
+					}
+				} else {
+					delete dish.ProductImage;
+				}
+			} 
 			db.dishes.save(dish, (err, result) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
@@ -90,29 +96,54 @@ exports.register = function(server, options, next) {
 	});
 
 	server.route({
-		method: 'PATCH',
+		method: 'PUT',
 		path: '/dishes/{id}',
 		handler: function(request, reply) {
-			db.dishes.update({
-				_id: request.params.id
-			}, {
-				$set: request.payload,
-				_date: Date.now()
-			}, function(err, result) {
+			var dish = request.payload;
+			dish.date = Date.now();
+			if (dish.ProductImage) {
+				if (dish.ProductImage.path) {
+					var imageSavePath = opts.imagePath + request.params.id + '.jpg';
+					if (fs.existsSync(dish.ProductImage.path) && 
+						db.dishes.find({_id: request.params.id})) {
+						fs.moveSync(dish.ProductImage.path, imageSavePath, {
+							overwrite: true
+						});
+						dish.ProductImage = request.params.id + '.jpg';
+					} else {
+						delete dish.ProductImage;
+					}
+				} else {
+					delete dish.ProductImage;
+				}
+			}
+			db.dishes.update({_id: request.params.id}, 
+			{$set: dish}, function(err, result) {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
 				}
 				if (result.n === 0) {
 					return reply(Boom.notFound());
 				}
+
 				reply().code(204);
 			});
+
 		},
 		config: {
+			payload: {
+				output: 'file',
+				maxBytes: 1024 * 1024 * 1,
+				parse: true
+			},
 			validate: {
-				payload: Joi.object({
-					ProductPrice: Joi.number().required()
-				}).required().min(1)
+				payload: {
+					CreatePerson: Joi.string().min(2).max(50),
+					ProductName: Joi.string().min(2).max(100),
+					ProductSize: Joi.string().min(2).max(50),
+					ProductPrice: Joi.number().required(),
+					ProductImage: Joi.any()
+				}
 			}
 		}
 	});

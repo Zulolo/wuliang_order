@@ -16,11 +16,12 @@ server.connection({
 });
 
 // server.app.db =  mysql.createConnection(dbConfig);
-server.app.db = mongojs('hapi-rest-mongo', ['dishes']);
+server.app.db = mongojs('wuliang_order', ['dishes', 'shop_info']);
 
 //Load plugins and start server
 server.register([
-    require('./routes/dishes')
+    require('./routes/dishes'),
+    require('./routes/shop_info')
 ], (err) => {
     if (err) {
         throw err;
