@@ -32,15 +32,22 @@ exports.register = function(server, options, next) {
 		method: 'POST',
 		path: '/shop_info',
 		handler: function(request, reply) {
-			const info = request.payload;
+			var info = request.payload;
 			info.date = Date.now();
-			if (fs.existsSync(request.payload.icon.path)) {
-				var imageSavePath = opts.imagePath + 'wuliang_order_logo.jpg';
-				fs.moveSync(request.payload.icon.path, imageSavePath, {
-					overwrite: true
-				});
-				info.icon = imageSavePath;
-			}
+			if (info.icon) {
+				if (info.icon.path) {
+					if (fs.existsSync(info.icon.path)) {
+						fs.moveSync(info.icon.path, opts.logoPath, {
+							overwrite: true
+						});
+						info.icon = opts.logoPath;
+					} else {
+						delete info.icon;
+					}
+				} else {
+					delete info.icon;
+				}
+			} 
 			db.shop_info.save(info, (err, result) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
@@ -58,11 +65,67 @@ exports.register = function(server, options, next) {
 				payload: {
 					latitude: Joi.number(),
 					longitude: Joi.number(),
+					name: Joi.string().min(2).max(50).required(),
+					address: Joi.string().min(2).max(50).required(),
+					tel: Joi.number().required(),
+					starttime: Joi.string(),
+					endtime: Joi.string(),
+					wechat: Joi.string().min(2).max(50).required(),
+					icon: Joi.any()
+				}
+			}
+		}
+	});
+
+	server.route({
+		method: 'PUT',
+		path: '/shop_info',
+		handler: function(request, reply) {
+			var info = request.payload;
+			info.date = Date.now();
+			if (info.icon) {
+				if (info.icon.path) {
+					if (fs.existsSync(info.icon.path) && 
+						db.shop_info.find()) {
+						fs.moveSync(info.icon.path, opts.logoPath, {
+							overwrite: true
+						});
+						info.icon = opts.logoPath;
+					} else {
+						delete info.ProductImage;
+					}
+				} else {
+					delete info.ProductImage;
+				}
+			}
+			db.shop_info.update({}, 
+			{$set: info}, function(err, result) {
+				if (err) {
+					return reply(Boom.wrap(err, 'Internal MongoDB error'));
+				}
+				if (result.n === 0) {
+					return reply(Boom.notFound());
+				}
+
+				reply().code(204);
+			});
+
+		},
+		config: {
+			payload: {
+				output: 'file',
+				maxBytes: 256 * 1024,
+				parse: true
+			},
+			validate: {
+				payload: {
+					latitude: Joi.number(),
+					longitude: Joi.number(),
 					name: Joi.string().min(2).max(50),
 					address: Joi.string().min(2).max(50),
-					tel: Joi.number(),
-					starttime: Joi.date(),
-					endtime: Joi.date(),
+					tel: Joi.number().required(),
+					starttime: Joi.string(),
+					endtime: Joi.string(),
 					wechat: Joi.string().min(2).max(50),
 					icon: Joi.any()
 				}

@@ -1,5 +1,6 @@
 {
 	"imagePath": "/usr/share/nginx/html/images/",
+	"logoPath": "/usr/share/nginx/html/images/wuliang_order_logo.jpg",
 	"dbConfig": {
 		"host": "172.17.0.7",
 		"port": "3306",
