@@ -21,7 +21,8 @@ server.app.db = mongojs('wuliang_order', ['dishes', 'shop_info']);
 //Load plugins and start server
 server.register([
     require('./routes/dishes'),
-    require('./routes/shop_info')
+    require('./routes/shop_info'),
+    require('./routes/user_manage')
 ], (err) => {
     if (err) {
         throw err;
