@@ -1,6 +1,8 @@
 {
-	"imagePath": "/usr/share/nginx/html/images/",
-	"logoPath": "/usr/share/nginx/html/images/wuliang_order_logo.jpg",
+	"imageLocalPath": "/usr/share/nginx/html/images/",
+	"imageRemotePath": "https://www.zulolo.com/images/",
+	"logoLocalPath": "/usr/share/nginx/html/images/", 
+	"logoName": "wuliang_order_logo.jpg",
 	"dbConfig": {
 		"host": "172.17.0.7",
 		"port": "3306",

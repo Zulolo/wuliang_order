@@ -19,7 +19,7 @@ exports.register = function(server, options, next) {
 		method: 'GET',
 		path: '/shop_info',
 		handler: function(request, reply) {
-			db.shop_info.find((err, docs) => {
+			db.shop_info.findOne((err, docs) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
 				}
@@ -37,10 +37,10 @@ exports.register = function(server, options, next) {
 			if (info.icon) {
 				if (info.icon.path) {
 					if (fs.existsSync(info.icon.path)) {
-						fs.moveSync(info.icon.path, opts.logoPath, {
+						fs.moveSync(info.icon.path, opts.logoLocalPath + opts.logoName, {
 							overwrite: true
 						});
-						info.icon = opts.logoPath;
+						info.icon = opts.imageRemotePath + opts.logoName;
 					} else {
 						delete info.icon;
 					}
@@ -87,10 +87,10 @@ exports.register = function(server, options, next) {
 				if (info.icon.path) {
 					if (fs.existsSync(info.icon.path) && 
 						db.shop_info.find()) {
-						fs.moveSync(info.icon.path, opts.logoPath, {
+						fs.moveSync(info.icon.path, opts.logoLocalPath + opts.logoName, {
 							overwrite: true
 						});
-						info.icon = opts.logoPath;
+						info.icon = opts.imageRemotePath + opts.logoName;
 					} else {
 						delete info.ProductImage;
 					}

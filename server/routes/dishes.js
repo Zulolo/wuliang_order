@@ -26,7 +26,10 @@ exports.register = function(server, options, next) {
 				if (!list) {
 					return reply(Boom.notFound());
 				}
-				var result = [];
+				var result = {};
+				result.cost = 888;
+				result.number = 6;
+				result.menu = [];
 				list.forEach(function(item, index) {
 					db.dishes.find({ProductType: item}, (err, doc) => {
 						if (err) {
@@ -34,11 +37,11 @@ exports.register = function(server, options, next) {
 						}
 						if (doc) {
 							// console.log('result 0:', result[0]);
-							var products = {};
-							products.ProductType = item;
-							products.menuContent = doc;
-							result.push(products);
-							if (result.length === list.length) {
+							var menu = {};
+							menu.ProductType = item;
+							menu.menuContent = doc;
+							result.menu.push(menu);
+							if (result.menu.length === list.length) {
 								reply(result);
 							}
 						}
@@ -75,12 +78,12 @@ exports.register = function(server, options, next) {
 			dish.date = Date.now();
 			if (dish.ProductImage) {
 				if (dish.ProductImage.path) {
-					var imageSavePath = opts.imagePath + dish._id + '.jpg';
+					var imageSavePath = opts.imageLocalPath + dish._id + '.jpg';
 					if (fs.existsSync(dish.ProductImage.path)) {
 						fs.moveSync(dish.ProductImage.path, imageSavePath, {
 							overwrite: true
 						});
-						dish.ProductImage = dish._id + '.jpg';
+						dish.ProductImage = opts.imageRemotePath + dish._id + '.jpg';
 					} else {
 						delete dish.ProductImage;
 					}
@@ -123,13 +126,13 @@ exports.register = function(server, options, next) {
 			dish.date = Date.now();
 			if (dish.ProductImage) {
 				if (dish.ProductImage.path) {
-					var imageSavePath = opts.imagePath + request.params.id + '.jpg';
+					var imageSavePath = opts.imageLocalPath + request.params.id + '.jpg';
 					if (fs.existsSync(dish.ProductImage.path) && 
 						db.dishes.find({_id: request.params.id})) {
 						fs.moveSync(dish.ProductImage.path, imageSavePath, {
 							overwrite: true
 						});
-						dish.ProductImage = request.params.id + '.jpg';
+						dish.ProductImage = opts.imageRemotePath + request.params.id + '.jpg';
 					} else {
 						delete dish.ProductImage;
 					}
