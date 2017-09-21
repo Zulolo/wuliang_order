@@ -19,11 +19,30 @@ exports.register = function(server, options, next) {
 		method: 'GET',
 		path: '/dishes',
 		handler: function(request, reply) {
-			db.dishes.find((err, docs) => {
+			db.dishes.distinct('ProductType', {}, (err, list) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
 				}
-				reply(docs);
+				if (!list) {
+					return reply(Boom.notFound());
+				}
+				var result = [];
+				for (var i = 0, len = list.length; i < len; i++) {
+					result[i] = {};
+					result[i].ProductType = list[i];
+					db.dishes.find({ProductType: list[i]}, (err, doc) => {
+						if (err) {
+							return reply(Boom.wrap(err, 'Internal MongoDB error'));
+						}
+						if (doc) {
+							console.log('result 0:', result[0]);
+							console.log('result 1:', result[1]);
+							console.log('result 2:', result[2]);
+							// result[i].menuContent = doc;
+						}
+					});
+				}
+				reply(result);
 			});
 		}
 	});
@@ -33,9 +52,7 @@ exports.register = function(server, options, next) {
 		method: 'GET',
 		path: '/dishes/{id}',
 		handler: function(request, reply) {
-			db.dishes.findOne({
-				_id: request.params.id
-			}, (err, doc) => {
+			db.dishes.findOne({_id: request.params.id}, (err, doc) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
 				}
@@ -87,6 +104,8 @@ exports.register = function(server, options, next) {
 				payload: {
 					CreatePerson: Joi.string().min(2).max(50).required(),
 					ProductName: Joi.string().min(2).max(100).required(),
+					ProductType: Joi.string().valid("快餐", "营养套餐", "垃圾食品", "猪吃的").required(),
+					ProductRate: Joi.number(),
 					ProductSize: Joi.string().min(2).max(50),
 					ProductPrice: Joi.number().required(),
 					ProductImage: Joi.any()
@@ -141,6 +160,7 @@ exports.register = function(server, options, next) {
 					CreatePerson: Joi.string().min(2).max(50),
 					ProductName: Joi.string().min(2).max(100),
 					ProductSize: Joi.string().min(2).max(50),
+					ProductType: Joi.string().min(2).max(100),
 					ProductPrice: Joi.number().required(),
 					ProductImage: Joi.any()
 				}
