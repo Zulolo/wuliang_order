@@ -27,22 +27,23 @@ exports.register = function(server, options, next) {
 					return reply(Boom.notFound());
 				}
 				var result = [];
-				for (var i = 0, len = list.length; i < len; i++) {
-					result[i] = {};
-					result[i].ProductType = list[i];
-					db.dishes.find({ProductType: list[i]}, (err, doc) => {
+				list.forEach(function(item, index) {
+					db.dishes.find({ProductType: item}, (err, doc) => {
 						if (err) {
 							return reply(Boom.wrap(err, 'Internal MongoDB error'));
 						}
 						if (doc) {
-							console.log('result 0:', result[0]);
-							console.log('result 1:', result[1]);
-							console.log('result 2:', result[2]);
-							// result[i].menuContent = doc;
+							// console.log('result 0:', result[0]);
+							var products = {};
+							products.ProductType = item;
+							products.menuContent = doc;
+							result.push(products);
+							if (result.length === list.length) {
+								reply(result);
+							}
 						}
-					});
-				}
-				reply(result);
+					});					
+				})
 			});
 		}
 	});

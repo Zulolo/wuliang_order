@@ -2,7 +2,7 @@
   "apps": [{
     "name": "wuliang order",
     "script": "./server/server.js",
-    "cwd": "/root/nideshop/",
+    "cwd": "/root/wuliang_order/",
     "exec_mode": "cluster",
     "instances": 0,
     "max_memory_restart": "512M",
