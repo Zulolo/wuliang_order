@@ -27,8 +27,8 @@ exports.register = function(server, options, next) {
 					return reply(Boom.notFound());
 				}
 				var result = {};
-				result.cost = 888;
-				result.number = 6;
+				result.cost = 0;
+				result.number = 0;
 				result.menu = [];
 				list.forEach(function(item, index) {
 					db.dishes.find({ProductType: item}, (err, doc) => {
