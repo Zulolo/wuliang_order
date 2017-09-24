@@ -165,7 +165,7 @@ exports.register = function(server, options, next) {
 					ProductName: Joi.string().min(2).max(100),
 					ProductSize: Joi.string().min(2).max(50),
 					ProductType: Joi.string().min(2).max(100),
-					ProductPrice: Joi.number().required(),
+					ProductPrice: Joi.number(),
 					ProductImage: Joi.any()
 				}
 			}
