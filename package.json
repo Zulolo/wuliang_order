@@ -10,13 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "boom": "^5.2.0",
+    "catbox-memory": "^3.0.0",
     "config-file": "^0.3.2",
     "fs": "0.0.1-security",
     "fs-extra": "^4.0.2",
     "hapi": "^16.5.2",
     "joi": "^10.6.0",
     "mongojs": "^2.4.1",
-    "mysql": "^2.14.1",
     "node-uuid": "^1.4.8",
     "request": "^2.82.0",
     "uuid": "^3.1.0"

@@ -9,7 +9,7 @@ const mongojs = require('mongojs');
 
 // var dbConfig = config.get('default').dbConfig;
 // var mysql_conn = mysql.createConnection(dbConfig);
-const server = new Hapi.Server();
+const server = new Hapi.Server({cache: require('catbox-memory')});
 server.connection({  
     host: 'localhost', 
     port: 3000
@@ -17,6 +17,14 @@ server.connection({
 
 // server.app.db =  mysql.createConnection(dbConfig);
 server.app.db = mongojs('wuliang_order', ['dishes', 'shop_info']);
+server.app.cache = server.cache({segment: 'user', expiresIn: 60 * 60 * 1000 });
+server.app.user_manage = function (request, reply) {
+    if (request.payload) {
+
+    } else {
+        return reply(Boom.unauthorized());
+    }
+};
 
 //Load plugins and start server
 server.register([

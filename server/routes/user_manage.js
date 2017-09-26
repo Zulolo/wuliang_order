@@ -36,7 +36,7 @@ exports.register = function(server, options, next) {
 				if (!error && response.statusCode == 200) {
 					var user_info = {};
 					var obj = JSON.parse(body);
-					console.log('obj:', obj);
+					console.log('wx_login obj:', obj);
 					user_info.openid = obj.openid;
 					// if (body.unionid) {
 					// 	user_info.unionid = body.unionid;
@@ -57,6 +57,15 @@ exports.register = function(server, options, next) {
 				}
 			}
 		}
+	});
+
+	server.route({
+		method: 'POST',
+		path: '/user_info',
+		handler: function(request, reply) {
+			console.log('user_info:', request.payload);
+			reply(request.payload);
+		},
 	});
 
 	return next();

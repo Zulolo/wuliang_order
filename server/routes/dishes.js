@@ -49,6 +49,11 @@ exports.register = function(server, options, next) {
 				})
 			});
 		}
+		config: {
+			pre: [{
+				method: server.app.user_manage /* function to be called */
+			}]
+		}
 	});
 
 
