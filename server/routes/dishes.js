@@ -48,10 +48,11 @@ exports.register = function(server, options, next) {
 					});					
 				})
 			});
-		}
+		},
 		config: {
 			pre: [{
-				method: server.app.user_manage /* function to be called */
+				method: server.app.user_manage,
+				assign: 'session'
 			}]
 		}
 	});
@@ -70,6 +71,12 @@ exports.register = function(server, options, next) {
 				}
 				reply(doc);
 			});
+		},
+		config: {
+			pre: [{
+				method: server.app.user_manage,
+				assign: 'session'
+			}]
 		}
 	});
 
@@ -104,6 +111,10 @@ exports.register = function(server, options, next) {
 			});
 		},
 		config: {
+			pre: [{
+				method: server.app.user_manage,
+				assign: 'session'
+			}],
 			payload: {
 				output: 'file',
 				maxBytes: 1024 * 1024 * 1,
@@ -159,6 +170,10 @@ exports.register = function(server, options, next) {
 
 		},
 		config: {
+			pre: [{
+				method: server.app.user_manage,
+				assign: 'session'
+			}],
 			payload: {
 				output: 'file',
 				maxBytes: 1024 * 1024 * 1,
@@ -192,6 +207,12 @@ exports.register = function(server, options, next) {
 				}
 				reply().code(204);
 			});
+		},
+		config: {
+			pre: [{
+				method: server.app.user_manage,
+				assign: 'session'
+			}],
 		}
 	});
 

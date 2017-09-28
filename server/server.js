@@ -1,15 +1,9 @@
 'use strict';
 
 const Hapi = require('hapi');
-// var mysql = require('mysql');
 const mongojs = require('mongojs');
-// var config = require('nodejs-config')(
-//    './config'  // an absolute path to your applications `config` directory 
-// );
-
-// var dbConfig = config.get('default').dbConfig;
-// var mysql_conn = mysql.createConnection(dbConfig);
-const server = new Hapi.Server({cache: require('catbox-memory')});
+const Boom = require('boom');
+const server = new Hapi.Server();
 server.connection({  
     host: 'localhost', 
     port: 3000
@@ -17,11 +11,29 @@ server.connection({
 
 // server.app.db =  mysql.createConnection(dbConfig);
 server.app.db = mongojs('wuliang_order', ['dishes', 'shop_info']);
-server.app.cache = server.cache({segment: 'user', expiresIn: 60 * 60 * 1000 });
-server.app.user_manage = function (request, reply) {
-    if (request.payload) {
+server.app.cache = server.cache({segment: 'session', expiresIn: 60 * 60 * 1000 });
 
+server.app.user_manage = function (request, reply) {
+    const req = request.raw.req;
+    const session = req.headers.session;
+    if (session) {
+        server.app.cache.get(session, (err, value, cached, log) => {
+            if (err) {
+                console.log('server get session err:', err);
+                return reply(Boom.unauthorized());
+            } else {
+                if (value) {
+                    console.log('session value is:', value);
+                    return reply(value);
+                } else {
+                    console.log('server get session value empty: ', value);
+                    return reply(Boom.unauthorized());
+                }
+
+            }
+        });
     } else {
+        console.log('no session found in header.', session);
         return reply(Boom.unauthorized());
     }
 };
@@ -42,44 +54,3 @@ server.register([
 
 });
 
-// server.route({
-//     method: 'GET',
-//     path: '/wuliang_order',
-//     handler: function (request, reply) {
-//         reply('wu liang order home!');
-//     }
-// });
-
-// server.route({
-//     method: 'GET',
-//     path: '/wuliang_order/menu/list_all',
-//     handler: function (request, reply) {
-//         reply(results);
-//     }
-// });
-
-// server.route({
-//     method: 'GET',
-//     path: '/wuliang_order/{module}',
-//     handler: function (request, reply) {
-//         // reply('Module -- ' + encodeURIComponent(request.params.module) + ' under developing!');
-//         mysql_conn.connect();
- 
-//         mysql_conn.query('SELECT * from menu', function (error, results, fields) {
-//         if (error) throw error;
-//             console.log('The solution is: ', results[0].solution);
-//         });
-//         reply(results);
-//         mysql_conn.end();
-//     }
-// });
-
-
-
-// server.start((err) => {
-
-//     if (err) {
-//         throw err;
-//     }
-//     console.log(`Server running at: ${server.info.uri}`);
-// });

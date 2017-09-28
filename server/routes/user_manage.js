@@ -30,17 +30,25 @@ exports.register = function(server, options, next) {
 					grant_type: 'authorization_code'
 				}
 			}, function(error, response, body) {
-				// console.log('error:', error);
-				// console.log('response:', response);
-				// console.log('body:', body);
 				if (!error && response.statusCode == 200) {
 					var user_info = {};
-					var obj = JSON.parse(body);
-					console.log('wx_login obj:', obj);
-					user_info.openid = obj.openid;
-					// if (body.unionid) {
-					// 	user_info.unionid = body.unionid;
-					// }
+					var secret_session = JSON.parse(body);
+					
+					user_info.openid = secret_session.openid;
+					user_info.session = uuid.v1();
+					console.log('user_info:', user_info);
+					server.app.cache.set(user_info.session, secret_session, null, (err) => {
+						if (err) {
+							console.log('server.app.cache.set err:', err);
+						}				
+					});
+					server.app.cache.get(user_info.session, (err, value, cached, log) => {
+						if (err) {
+							console.log('server.app.cache.get err:', err);
+						} else {
+							console.log('server.app.cache.get:', value);
+						}
+					});
 					reply(user_info);
 				} else {
 					return reply(Boom.wrap(error, 'Internal tencent server get session key error.'));
