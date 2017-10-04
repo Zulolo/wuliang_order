@@ -16,6 +16,21 @@ exports.register = function(server, options, next) {
 	//PLACEHOLDER
 	//--------------------------------------------------------------
 	//Here the routes definitions will be inserted in the next steps...
+
+	server.route({
+		method: 'GET',
+		path: '/login',
+		handler: function(request, reply) {
+			reply().code(200);
+		},
+		config: {
+			pre: [{
+				method: server.app.user_manage,
+				assign: 'session'
+			}]
+		}
+	});
+
 	server.route({
 		method: 'POST',
 		path: '/login',
@@ -24,8 +39,8 @@ exports.register = function(server, options, next) {
 			wx_request.post({
 				url: opts.wx_login,
 				form: {
-					appid: request.payload.appid,
-					secret: request.payload.secret,
+					appid: opts.appid,
+					secret: opts.secret,
 					js_code: request.payload.code,
 					grant_type: 'authorization_code'
 				}
@@ -59,9 +74,7 @@ exports.register = function(server, options, next) {
 		config: {
 			validate: {
 				payload: {
-					code: Joi.string().min(12).max(50).required(),
-					appid: Joi.string().min(8).max(50).required(),
-					secret: Joi.string().min(8).max(50).required(),
+					code: Joi.string().min(12).max(50).required()
 				}
 			}
 		}

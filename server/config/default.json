@@ -1,7 +1,0 @@
-{
-	"imageLocalPath": "/usr/share/nginx/html/images/",
-	"imageRemotePath": "https://www.zulolo.com/images/",
-	"logoLocalPath": "/usr/share/nginx/html/images/", 
-	"logoName": "wuliang_order_logo.jpg",
-	"wx_login": "https://api.weixin.qq.com/sns/jscode2session"
-}
