@@ -88,6 +88,7 @@ exports.register = function(server, options, next) {
 			//Create an id
 			dish._id = uuid.v1();
 			dish.date = Date.now();
+			dish.CreatePerson = request.pre.session.openid;
 			if (dish.ProductImage) {
 				if (dish.ProductImage.path) {
 					var imageSavePath = opts.imageLocalPath + dish._id + '.jpg';
@@ -102,7 +103,9 @@ exports.register = function(server, options, next) {
 				} else {
 					delete dish.ProductImage;
 				}
-			} 
+			}  else {
+				dish.ProductImage = opts.imageRemotePath + opts.defaultDishPic;
+			}
 			db.dishes.save(dish, (err, result) => {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
@@ -122,12 +125,13 @@ exports.register = function(server, options, next) {
 			},
 			validate: {
 				payload: {
-					CreatePerson: Joi.string().min(2).max(50).required(),
+					// CreatePerson: Joi.string().min(2).max(50).required(),
 					ProductName: Joi.string().min(2).max(100).required(),
-					ProductType: Joi.string().valid("快餐", "营养套餐", "垃圾食品", "猪吃的").required(),
+					ProductType: Joi.string().min(2).max(50).required(),	//.valid("快餐", "营养套餐", "垃圾食品", "猪吃的").required(),
 					ProductRate: Joi.number(),
-					ProductSize: Joi.string().min(2).max(50),
+					ProductSize: Joi.string().min(1).max(50),
 					ProductPrice: Joi.number().required(),
+					ProductDesc: Joi.string(),
 					ProductImage: Joi.any()
 				}
 			}

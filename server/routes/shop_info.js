@@ -23,6 +23,7 @@ exports.register = function(server, options, next) {
 				if (err) {
 					return reply(Boom.wrap(err, 'Internal MongoDB error'));
 				}
+				docs.manage_access = true;
 				reply(docs);
 			});
 		}
