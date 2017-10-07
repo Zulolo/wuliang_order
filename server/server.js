@@ -23,7 +23,7 @@ server.app.user_manage = function (request, reply) {
                 return reply(Boom.unauthorized());
             } else {
                 if (value) {
-                    console.log('session value is:', value);
+                    // console.log('session value is:', value);
                     return reply(value);
                 } else {
                     console.log('server get session value empty: ', value);
@@ -37,6 +37,24 @@ server.app.user_manage = function (request, reply) {
         return reply(Boom.unauthorized());
     }
 };
+
+// server.app.get_openid_from_session = function (request, reply) {
+//     const req = request.raw.req;
+//     const session = req.headers.session;
+//     if (session) {
+//         server.app.cache.get(session, (err, value, cached, log) => {
+//             if (err) {
+//                 console.log('server get session err:', err);
+//                 return null;
+//             } else {
+//                 return value;
+//             }
+//         });
+//     } else {
+//         console.log('no session found in header.', session);
+//         return null;
+//     }
+// };
 
 //Load plugins and start server
 server.register([

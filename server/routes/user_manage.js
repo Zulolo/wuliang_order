@@ -35,7 +35,7 @@ exports.register = function(server, options, next) {
 		method: 'POST',
 		path: '/login',
 		handler: function(request, reply) {
-			// console.log('login:', request.payload);
+			console.log('login payload:', request.payload);
 			wx_request.post({
 				url: opts.wx_login,
 				form: {
@@ -51,7 +51,7 @@ exports.register = function(server, options, next) {
 					
 					user_info.openid = secret_session.openid;
 					user_info.session = uuid.v1();
-					console.log('user_info:', user_info);
+					// console.log('user_info:', user_info);
 					server.app.cache.set(user_info.session, secret_session, null, (err) => {
 						if (err) {
 							console.log('server.app.cache.set err:', err);
@@ -61,7 +61,7 @@ exports.register = function(server, options, next) {
 						if (err) {
 							console.log('server.app.cache.get err:', err);
 						} else {
-							console.log('server.app.cache.get:', value);
+							// console.log('server.app.cache.get:', value);
 						}
 					});
 					reply(user_info);
@@ -84,7 +84,7 @@ exports.register = function(server, options, next) {
 		method: 'POST',
 		path: '/user_info',
 		handler: function(request, reply) {
-			console.log('user_info:', request.payload);
+			// console.log('user_info:', request.payload);
 			reply(request.payload);
 		},
 	});

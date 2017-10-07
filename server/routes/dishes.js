@@ -83,7 +83,8 @@ exports.register = function(server, options, next) {
 	server.route({
 		method: 'POST',
 		path: '/dishes',
-		handler: function(request, reply) {
+		handler: function(request, reply) {		
+			console.log('add dish payload: ', request.payload);
 			var dish = request.payload;
 			//Create an id
 			dish._id = uuid.v1();
@@ -93,17 +94,23 @@ exports.register = function(server, options, next) {
 				if (dish.ProductImage.path) {
 					var imageSavePath = opts.imageLocalPath + dish._id + '.jpg';
 					if (fs.existsSync(dish.ProductImage.path)) {
-						fs.moveSync(dish.ProductImage.path, imageSavePath, {
-							overwrite: true
-						});
-						dish.ProductImage = opts.imageRemotePath + dish._id + '.jpg';
+						// var stats = fs.statSync(dish.ProductImage.path);
+						// if (stats["size"] < (16 * 1024 * 1)) {
+							fs.moveSync(dish.ProductImage.path, imageSavePath, {
+								overwrite: true
+							});
+							dish.ProductImage = imageSavePath;
+						// } else {
+						// 	console.log('Upload file too large.');
+						// 	return reply(Boom.wrap(err, 'File size can not be larger than 1MB.'));
+						// }
 					} else {
 						delete dish.ProductImage;
 					}
 				} else {
 					delete dish.ProductImage;
 				}
-			}  else {
+			} else {
 				dish.ProductImage = opts.imageRemotePath + opts.defaultDishPic;
 			}
 			db.dishes.save(dish, (err, result) => {
@@ -119,13 +126,12 @@ exports.register = function(server, options, next) {
 				assign: 'session'
 			}],
 			payload: {
-				output: 'file',
-				maxBytes: 1024 * 1024 * 1,
-				parse: true
+				multipart : {
+					output: 'file'
+				}
 			},
 			validate: {
 				payload: {
-					// CreatePerson: Joi.string().min(2).max(50).required(),
 					ProductName: Joi.string().min(2).max(100).required(),
 					ProductType: Joi.string().min(2).max(50).required(),	//.valid("快餐", "营养套餐", "垃圾食品", "猪吃的").required(),
 					ProductRate: Joi.number(),
@@ -179,9 +185,9 @@ exports.register = function(server, options, next) {
 				assign: 'session'
 			}],
 			payload: {
-				output: 'file',
-				maxBytes: 1024 * 1024 * 1,
-				parse: true
+				multipart : {
+					output: 'file'
+				}
 			},
 			validate: {
 				payload: {
