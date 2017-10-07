@@ -25,7 +25,7 @@ exports.register = function(server, options, next) {
 		},
 		config: {
 			pre: [{
-				method: server.app.user_manage,
+				method: server.app.get_session,
 				assign: 'session'
 			}]
 		}
@@ -35,7 +35,7 @@ exports.register = function(server, options, next) {
 		method: 'POST',
 		path: '/login',
 		handler: function(request, reply) {
-			console.log('login payload:', request.payload);
+			// console.log('login payload:', request.payload);
 			wx_request.post({
 				url: opts.wx_login,
 				form: {
@@ -82,9 +82,45 @@ exports.register = function(server, options, next) {
 
 	server.route({
 		method: 'POST',
+		path: '/add_admin',
+		handler: function(request, reply) {
+			// console.log('add_admin payload:', request.payload);
+			// use update because this user may has already ordered some dishes
+			var user_info = {};
+			user_info.isAdmin = request.pre.user_info.isAdmin;
+			if (user_info.isAdmin == true) {
+				db.user_info.update({openid: request.pre.session.openid}, 
+					{$set: user_info}, {upsert: true}, function(err, result) {
+					if (err) {
+						return reply(Boom.wrap(err, 'Internal MongoDB error'));
+					}
+					reply().code(204);
+				});
+			} else {
+				reply(Boom.unauthorized());
+			}
+		},
+		config: {
+			pre: [{
+				method: server.app.get_session,
+				assign: 'session'
+			}, {
+				method: server.app.get_user,
+				assign: 'user_info'
+			}],
+			validate: {
+				payload: {
+					openid: Joi.string().min(10).max(50).required()
+				}
+			}
+		}
+	});
+
+	server.route({
+		method: 'POST',
 		path: '/user_info',
 		handler: function(request, reply) {
-			// console.log('user_info:', request.payload);
+			console.log('user_info post:', request.payload);
 			reply(request.payload);
 		},
 	});

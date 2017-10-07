@@ -10,10 +10,10 @@ server.connection({
 });
 
 // server.app.db =  mysql.createConnection(dbConfig);
-server.app.db = mongojs('wuliang_order', ['dishes', 'shop_info']);
+server.app.db = mongojs('wuliang_order', ['dishes', 'shop_info', 'user_info']);
 server.app.cache = server.cache({segment: 'session', expiresIn: 60 * 60 * 1000 });
 
-server.app.user_manage = function (request, reply) {
+server.app.get_session = function (request, reply) {
     const req = request.raw.req;
     const session = req.headers.session;
     if (session) {
@@ -34,6 +34,24 @@ server.app.user_manage = function (request, reply) {
         });
     } else {
         console.log('no session found in header.', session);
+        return reply(Boom.unauthorized());
+    }
+};
+
+server.app.get_user = function (request, reply) {
+    var openid = request.pre.session.openid;
+    if (openid) {
+        db.user_info.findOne({openid: openid}, (err, doc) => {
+            if (err) {
+                return reply(Boom.wrap(err, 'Internal MongoDB error'));
+            }
+            if (!doc) {
+                return reply(Boom.notFound());
+            }
+            reply(doc);
+        });
+    } else {
+        console.log('no opnid found in db.', request.pre.session);
         return reply(Boom.unauthorized());
     }
 };

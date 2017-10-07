@@ -51,7 +51,7 @@ exports.register = function(server, options, next) {
 		},
 		config: {
 			pre: [{
-				method: server.app.user_manage,
+				method: server.app.get_session,
 				assign: 'session'
 			}]
 		}
@@ -74,7 +74,7 @@ exports.register = function(server, options, next) {
 		},
 		config: {
 			pre: [{
-				method: server.app.user_manage,
+				method: server.app.get_session,
 				assign: 'session'
 			}]
 		}
@@ -84,7 +84,7 @@ exports.register = function(server, options, next) {
 		method: 'POST',
 		path: '/dishes',
 		handler: function(request, reply) {		
-			console.log('add dish payload: ', request.payload);
+			// console.log('add dish payload: ', request.payload);
 			var dish = request.payload;
 			//Create an id
 			dish._id = uuid.v1();
@@ -122,7 +122,7 @@ exports.register = function(server, options, next) {
 		},
 		config: {
 			pre: [{
-				method: server.app.user_manage,
+				method: server.app.get_session,
 				assign: 'session'
 			}],
 			payload: {
@@ -181,7 +181,7 @@ exports.register = function(server, options, next) {
 		},
 		config: {
 			pre: [{
-				method: server.app.user_manage,
+				method: server.app.get_session,
 				assign: 'session'
 			}],
 			payload: {
@@ -220,7 +220,7 @@ exports.register = function(server, options, next) {
 		},
 		config: {
 			pre: [{
-				method: server.app.user_manage,
+				method: server.app.get_session,
 				assign: 'session'
 			}],
 		}
